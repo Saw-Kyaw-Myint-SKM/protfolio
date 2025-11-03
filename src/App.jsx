@@ -194,11 +194,10 @@ const MacTerminalWindow = ({ children, title, delay = 0 }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6, delay }}
     whileHover={{
-      scale: 1.02,
       boxShadow: "0 20px 40px -10px rgba(0, 255, 0, 0.2)",
       borderColor: "#10b981",
     }}
-    className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+    className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl overflow-hidden transition-all duration-100 cursor-pointer relative my-6"
   >
     <MacTerminalHeader>{title}</MacTerminalHeader>
     <div className="p-6">{children}</div>
@@ -278,13 +277,13 @@ const SkillTag = ({ skill, level, delay = 0 }) => {
     >
       <div className="flex justify-between items-center mb-2">
         <div className="text-green-300 font-mono text-sm">{skill}</div>
-        <div className="text-green-400 font-mono text-sm font-bold">
+        <div className="text-yellow-400 font-mono text-sm font-bold">
           {displayLevel}%
         </div>
       </div>
       <div className="w-full bg-gray-700 rounded-full h-2">
         <motion.div
-          className="bg-green-400 h-2 rounded-full"
+          className="bg-red-400 h-2 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${level}%` }}
           transition={{ duration: 1.5, delay: delay + 0.2, ease: "easeOut" }}
@@ -388,11 +387,10 @@ const AboutMeMacTerminal = ({ delay = 0 }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
       whileHover={{
-        scale: 1.02,
         boxShadow: "0 20px 40px -10px rgba(0, 255, 0, 0.2)",
         borderColor: "#10b981",
       }}
-      className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+      className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl overflow-hidden transition-all duration-100 cursor-pointer relative"
     >
       <MacTerminalHeader>About Me</MacTerminalHeader>
       <div className="p-6">
@@ -413,9 +411,9 @@ const AboutMeMacTerminal = ({ delay = 0 }) => {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="text-gray-300 mb-6 leading-relaxed text-sm"
             >
-              I'm a passionate full-stack developer with 5+ years of experience
-              creating web applications that solve real-world problems. I love
-              turning complex problems into simple, beautiful solutions.
+              I am currently employed at Metateammyanmar Company, which is based
+              in Japan. I have improved my clean code writing skills and become
+              good at learning skill.
             </motion.p>
             <motion.p
               initial={{ opacity: 0 }}
@@ -423,8 +421,9 @@ const AboutMeMacTerminal = ({ delay = 0 }) => {
               transition={{ duration: 0.5, delay: 0.6 }}
               className="text-gray-300 mb-6 leading-relaxed text-sm"
             >
-              When I'm not coding, you can find me contributing to open-source
-              projects, exploring new technologies, or hiking in the mountains.
+              Studied Computer Science in University of computer studies, Loikaw
+              and stopped in 2020 because of Covid. I currently studying
+              University of Dagon.
             </motion.p>
 
             <motion.div
@@ -463,7 +462,7 @@ const AboutMeMacTerminal = ({ delay = 0 }) => {
                 className="flex items-center space-x-3 cursor-pointer"
               >
                 <Award className="text-green-400" size={16} />
-                <span className="text-gray-300">10+ Successful Projects</span>
+                <span className="text-gray-300">5+ Successful Projects</span>
               </motion.div>
             </motion.div>
           </div>
@@ -479,14 +478,14 @@ const AboutMeMacTerminal = ({ delay = 0 }) => {
             </motion.h3>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { name: "React.js", level: 90 },
-                { name: "JavaScript", level: 85 },
-                { name: "Node.js", level: 80 },
-                { name: "Python", level: 75 },
-                { name: "TypeScript", level: 85 },
-                { name: "Tailwind CSS", level: 90 },
-                { name: "MongoDB", level: 70 },
-                { name: "PostgreSQL", level: 65 },
+                { name: "React.js", level: 60 },
+                { name: "Vue.js", level: 80 },
+                { name: "Next", level: 50 },
+                { name: "Nuxt", level: 60 },
+                { name: "Livewire", level: 50 },
+                { name: "Laravel", level: 80 },
+                { name: "Docker", level: 30 },
+                { name: "Mysql", level: 75 },
               ].map((skill, index) => (
                 <SkillTag
                   key={index}
@@ -558,7 +557,7 @@ const BackToTopButton = () => {
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState("Home");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -573,11 +572,11 @@ export default function App() {
   useEffect(() => {
     const handleScroll = () => {
       const sections = [
-        "home",
-        "about",
-        "certifications",
-        "projects",
-        "contact",
+        "Home",
+        "About",
+        "Certifications",
+        "Projects",
+        "Contact",
       ];
       const scrollPosition = window.scrollY + 100;
 
@@ -693,7 +692,7 @@ export default function App() {
 
               {/* Desktop Navigation */}
               <div className="hidden md:flex space-x-8">
-                {["home", "about", "certifications", "projects", "contact"].map(
+                {["Home", "About", "Certifications", "Projects", "Contact"].map(
                   (section) => (
                     <motion.button
                       key={section}
@@ -709,17 +708,17 @@ export default function App() {
                         delay:
                           0.3 +
                           [
-                            "home",
-                            "about",
-                            "certifications",
-                            "projects",
-                            "contact",
+                            "Home",
+                            "About",
+                            "Certifications",
+                            "Projects",
+                            "Contact",
                           ].indexOf(section) *
                             0.1,
                       }}
                       onClick={() => scrollToSection(section)}
                       className={`font-mono text-sm transition-colors hover:text-green-400 ${
-                        activeSection === section
+                        activeSection == section
                           ? "text-green-400"
                           : "text-gray-300"
                       } cursor-pointer`}
@@ -753,7 +752,7 @@ export default function App() {
                 transition={{ duration: 0.3 }}
                 className="md:hidden py-4 border-t border-gray-700"
               >
-                {["home", "about", "certifications", "projects", "contact"].map(
+                {["Home", "About", "Certifications", "Projects", "Contact"].map(
                   (section) => (
                     <motion.button
                       key={section}
@@ -779,8 +778,8 @@ export default function App() {
 
         {/* Home Section */}
         <section
-          id="home"
-          className="min-h-screen flex items-center justify-center pt-16"
+          id="Home"
+          className="min-h-screen flex items-center justify-center pt-16 pb-8"
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <MacTerminalWindow title="Welcome to my portfolio" delay={0.4}>
@@ -788,15 +787,14 @@ export default function App() {
                 {/* Profile Photo without animation */}
                 <motion.div
                   whileHover={{
-                    scale: 1.05,
-                    rotate: 5,
+                    scale: 1.1,
                   }}
                   whileTap={{ scale: 0.95 }}
                   className="relative inline-block cursor-pointer"
                 >
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-green-400/30 mx-auto mb-6">
+                  <div className="w-44 h-44 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-green-400/30 mx-auto">
                     <img
-                      src="https://placehold.co/400x400/1a1a1a/00ff00?text=AC"
+                      src="/src/assets/profile.png"
                       alt="Alex Chen"
                       className="w-full h-full object-cover"
                     />
@@ -807,11 +805,11 @@ export default function App() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.8 }}
-                  className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4"
+                  className="text-4xl sm:text-4xl md:text-4xl font-bold mb-4"
                 >
                   <span className="text-green-400 font-mono">Hello, I'm</span>
                   <br />
-                  <span className="text-white">Alex Chen</span>
+                  <span className="text-white">Saw Kyaw Myint</span>
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
@@ -819,7 +817,7 @@ export default function App() {
                   transition={{ duration: 0.6, delay: 1.0 }}
                   className="text-xl text-gray-300 font-mono leading-relaxed"
                 >
-                  Full-Stack Developer | Problem Solver | Code Enthusiast
+                  Full-Stack Developer | Laravel | Next | Nuxt
                 </motion.p>
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
@@ -827,10 +825,10 @@ export default function App() {
                   transition={{ duration: 0.6, delay: 1.2 }}
                   className="text-gray-400 leading-relaxed max-w-2xl mx-auto"
                 >
-                  I build exceptional digital experiences that are fast,
-                  accessible, visually appealing, and responsive. Even if you
-                  don't know what that means, I can guarantee you'll like the
-                  end product.
+                  I have over 2 years of experience in this field. I excel at
+                  writing clean, efficient code and I’m passionate about
+                  learning and implementing modern technologies to build better
+                  digital experiences.
                 </motion.p>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -846,7 +844,7 @@ export default function App() {
                       color: "#0f172a",
                     }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors cursor-pointer"
+                    className="bg-green-400 text-gray-900 px-6 py-2.5 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors cursor-pointer"
                   >
                     View Projects
                   </motion.a>
@@ -858,7 +856,7 @@ export default function App() {
                       borderColor: "#10b981",
                     }}
                     whileTap={{ scale: 0.95 }}
-                    className="border border-green-400 text-green-400 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors cursor-pointer"
+                    className="border border-green-400 text-green-400 px-6 py-2.5 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors cursor-pointer"
                   >
                     Get In Touch
                   </motion.a>
@@ -869,7 +867,7 @@ export default function App() {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20">
+        <section id="About" className="md:py-8 py-3">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
               <AboutMeMacTerminal />
@@ -878,7 +876,7 @@ export default function App() {
         </section>
 
         {/* Certifications Section */}
-        <section id="certifications" className="py-20">
+        <section id="Certifications" className="md:py-8 py-3">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
               <MacTerminalWindow title="Professional Certifications">
@@ -906,7 +904,7 @@ export default function App() {
         </section>
 
         {/* Projects Section */}
-        <section id="projects" className="py-20">
+        <section id="Projects" className="md:py-8 py-3">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
               <MacTerminalWindow title="Recent Projects">
@@ -930,7 +928,7 @@ export default function App() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20">
+        <section id="Contact" className="md:py-8 py-3 md:pb-12 mb-6">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
               <MacTerminalWindow title="Get In Touch">
@@ -998,7 +996,7 @@ export default function App() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="py-8 border-t border-gray-700"
+          className="md:py-8 py-6 border-t border-gray-700"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.p
