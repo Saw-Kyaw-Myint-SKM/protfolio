@@ -1,35 +1,838 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Github,
+  Mail,
+  ExternalLink,
+  Menu,
+  X,
+  Code,
+  Terminal,
+  User,
+  Briefcase,
+  GraduationCap,
+  Award,
+  Loader,
+} from "lucide-react";
+import {
+  motion,
+  AnimatePresence,
+  useAnimation,
+  useInView,
+} from "framer-motion";
 
-function App() {
-  const [count, setCount] = useState(0)
+const CodeBackground = () => {
+  const codeSnippets = [
+    'const developer = { skills: ["React", "Node.js", "Python"], passion: "building amazing things" };',
+    "function createPortfolio() { return <Portfolio developer={me} />; }",
+    'console.log("Welcome to my developer portfolio!");',
+    "npm install --save creativity innovation problem-solving",
+    'git commit -m "Built an awesome portfolio"',
+    "let dreams = true; while(dreams) { code(); }",
+    'import { passion, dedication } from "./life.js";',
+    'class Developer extends Human { code() { return "beautiful solutions"; } }',
+  ];
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* Full screen repeating background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="grid grid-cols-8 md:grid-cols-12 gap-4 p-4">
+          {[...Array(96)].map((_, i) => (
+            <div
+              key={`pattern-${i}`}
+              className="text-green-400/20 font-mono text-xs text-center"
+            >
+              {codeSnippets[
+                Math.floor(Math.random() * codeSnippets.length)
+              ].slice(0, 15)}
+            </div>
+          ))}
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+
+      {/* Left to right racing code animation - full screen */}
+      <div className="absolute top-0 left-0 w-full h-full">
+        {[...Array(25)].map((_, i) => (
+          <motion.div
+            key={`left-right-racing-${i}`}
+            className="absolute text-green-400/25 font-mono text-sm whitespace-nowrap"
+            initial={{ x: "-100vw", top: `${(i * 8) % 100}%` }}
+            animate={{
+              x: "100vw",
+              opacity: [0, 1, 0.8, 0],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 6,
+              repeat: Infinity,
+              ease: "linear",
+              delay: Math.random() * 4,
+            }}
+            style={{
+              fontSize: `${12 + Math.random() * 4}px`,
+              transform: "translateY(-50%)",
+            }}
+          >
+            {codeSnippets[Math.floor(Math.random() * codeSnippets.length)]}
+          </motion.div>
+        ))}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+
+      {/* Additional floating code snippets */}
+      {[...Array(12)].map((_, i) => (
+        <motion.div
+          key={`floating-center-${i}`}
+          className="absolute text-green-400/15 font-mono text-xs opacity-30"
+          initial={{
+            left: `${10 + Math.random() * 80}%`,
+            top: `${10 + Math.random() * 80}%`,
+          }}
+          animate={{
+            opacity: [0.1, 0.3, 0.1],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 5 + Math.random() * 4,
+            repeat: Infinity,
+            repeatDelay: 4 + Math.random() * 3,
+            ease: "easeInOut",
+          }}
+        >
+          {codeSnippets[Math.floor(Math.random() * codeSnippets.length)]}
+        </motion.div>
+      ))}
+
+      {/* Pulsing dots - full screen distribution */}
+      {[...Array(15)].map((_, i) => (
+        <motion.div
+          key={`center-dot-${i}`}
+          className="absolute w-1 h-1 bg-green-400 rounded-full opacity-25"
+          initial={{
+            left: `${10 + Math.random() * 80}%`,
+            top: `${10 + Math.random() * 80}%`,
+          }}
+          animate={{
+            scale: [1, 2, 1],
+            opacity: [0.1, 0.4, 0.1],
+          }}
+          transition={{
+            duration: 3 + Math.random() * 2,
+            repeat: Infinity,
+            delay: Math.random() * 3,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+const LoadingScreen = () => {
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+      className="fixed inset-0 bg-gray-950 z-50 flex items-center justify-center"
+    >
+      <div className="text-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="text-green-400 mb-4"
+        >
+          <Loader size={64} />
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-green-300 font-mono text-lg"
+        >
+          Initializing developer environment...
+        </motion.p>
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: "200px" }}
+          transition={{ duration: 2, delay: 1 }}
+          className="h-1 bg-green-400/30 mx-auto mt-4 rounded-full overflow-hidden"
+        >
+          <motion.div
+            animate={{ width: "100%" }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
+            className="h-full bg-green-400"
+          />
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+const TerminalHeader = ({ children }) => (
+  <div className="bg-gray-900/80 backdrop-blur-sm border-b border-green-400/20 rounded-t-xl p-4">
+    <div className="flex items-center space-x-2">
+      <div className="flex space-x-1">
+        <motion.div
+          className="w-3 h-3 bg-red-500 rounded-full"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+        />
+        <motion.div
+          className="w-3 h-3 bg-yellow-500 rounded-full"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
+        />
+        <motion.div
+          className="w-3 h-3 bg-green-500 rounded-full"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
+        />
+      </div>
+      <div className="text-green-400 font-mono text-sm ml-4">~/portfolio</div>
+    </div>
+    {children && (
+      <div className="mt-2 text-green-300 font-mono text-xs">{children}</div>
+    )}
+  </div>
+);
+
+const TerminalWindow = ({ children, title, delay = 0 }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay }}
+    className="bg-gray-900/90 backdrop-blur-md border border-green-400/30 rounded-xl shadow-2xl overflow-hidden"
+  >
+    <TerminalHeader>{title}</TerminalHeader>
+    <div className="p-6">{children}</div>
+  </motion.div>
+);
+
+const ScrollReveal = ({ children, delay = 0, ...props }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, delay },
+      });
+    }
+  }, [isInView, controls, delay]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={controls}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const SkillTag = ({ skill, level, delay = 0 }) => (
+  <ScrollReveal delay={delay}>
+    <div className="bg-gray-800/50 border border-green-400/20 rounded-lg p-3 hover:bg-gray-800/70 transition-all duration-300">
+      <div className="text-green-300 font-mono text-sm mb-1">{skill}</div>
+      <div className="w-full bg-gray-700 rounded-full h-1.5">
+        <motion.div
+          className="bg-green-400 h-1.5 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${level}%` }}
+          transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
+        ></motion.div>
+      </div>
+    </div>
+  </ScrollReveal>
+);
+
+const ProjectCard = ({
+  title,
+  description,
+  tech,
+  liveUrl,
+  githubUrl,
+  delay = 0,
+}) => (
+  <ScrollReveal delay={delay}>
+    <TerminalWindow>
+      <h3 className="text-green-400 font-mono text-lg mb-2">{title}</h3>
+      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+        {description}
       </p>
-    </>
-  )
+      <div className="flex flex-wrap gap-2 mb-4">
+        {tech.map((t, i) => (
+          <motion.span
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
+            className="bg-green-400/10 text-green-300 px-2 py-1 rounded text-xs font-mono"
+          >
+            {t}
+          </motion.span>
+        ))}
+      </div>
+      <div className="flex space-x-3">
+        {liveUrl && (
+          <a
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 text-green-400 hover:text-green-300 transition-colors"
+          >
+            <ExternalLink size={14} />
+            <span className="text-sm">Live Demo</span>
+          </a>
+        )}
+        {githubUrl && (
+          <a
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 text-green-400 hover:text-green-300 transition-colors"
+          >
+            <Github size={14} />
+            <span className="text-sm">Code</span>
+          </a>
+        )}
+      </div>
+    </TerminalWindow>
+  </ScrollReveal>
+);
+
+const CertificationCard = ({ title, issuer, date, description, delay = 0 }) => (
+  <ScrollReveal delay={delay}>
+    <TerminalWindow>
+      <div className="flex items-start space-x-3 mb-3">
+        <Award className="text-green-400 mt-1 flex-shrink-0" size={20} />
+        <div>
+          <h3 className="text-green-400 font-mono text-lg">{title}</h3>
+          <p className="text-gray-400 text-sm">
+            {issuer} • {date}
+          </p>
+        </div>
+      </div>
+      <p className="text-gray-300 text-sm leading-relaxed">{description}</p>
+    </TerminalWindow>
+  </ScrollReveal>
+);
+
+function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        "home",
+        "about",
+        "certifications",
+        "projects",
+        "contact",
+      ];
+      const scrollPosition = window.scrollY + 100;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (
+            scrollPosition >= offsetTop &&
+            scrollPosition < offsetTop + offsetHeight
+          ) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsMenuOpen(false);
+  };
+
+  const skills = [
+    { name: "React.js", level: 90 },
+    { name: "JavaScript", level: 85 },
+    { name: "Node.js", level: 80 },
+    { name: "Python", level: 75 },
+    { name: "TypeScript", level: 85 },
+    { name: "Tailwind CSS", level: 90 },
+    { name: "MongoDB", level: 70 },
+    { name: "PostgreSQL", level: 65 },
+  ];
+
+  const certifications = [
+    {
+      title: "AWS Certified Developer - Associate",
+      issuer: "Amazon Web Services",
+      date: "2023",
+      description:
+        "Validates technical expertise in developing and maintaining applications on the AWS platform, including deployment, security, and debugging.",
+    },
+    {
+      title: "Google Professional Cloud Developer",
+      issuer: "Google Cloud",
+      date: "2022",
+      description:
+        "Demonstrates ability to build scalable applications using Google Cloud Platform services and APIs.",
+    },
+    {
+      title: "Microsoft Certified: Azure Developer Associate",
+      issuer: "Microsoft",
+      date: "2023",
+      description:
+        "Certifies skills in designing, building, testing, and maintaining cloud applications and services on Microsoft Azure.",
+    },
+    {
+      title: "MongoDB Certified Developer Associate",
+      issuer: "MongoDB Inc.",
+      date: "2022",
+      description:
+        "Validates knowledge of MongoDB fundamentals, CRUD operations, and application development using MongoDB.",
+    },
+  ];
+
+  const projects = [
+    {
+      title: "E-Commerce Platform",
+      description:
+        "A full-stack e-commerce solution with real-time inventory management, payment processing, and admin dashboard. Built with React, Node.js, and MongoDB.",
+      tech: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
+      liveUrl: "#",
+      githubUrl: "#",
+    },
+    {
+      title: "Task Management App",
+      description:
+        "Collaborative task management application with real-time updates, file sharing, and team collaboration features. Features drag-and-drop interface and notifications.",
+      tech: ["React", "Firebase", "Material-UI", "Socket.io"],
+      liveUrl: "#",
+      githubUrl: "#",
+    },
+    {
+      title: "Weather Dashboard",
+      description:
+        "Interactive weather dashboard with 7-day forecasts, location-based weather data, and beautiful data visualizations. Includes dark mode and responsive design.",
+      tech: ["React", "Weather API", "Chart.js", "Tailwind CSS"],
+      liveUrl: "#",
+      githubUrl: "#",
+    },
+  ];
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-100 font-sans overflow-x-hidden">
+      <AnimatePresence mode="wait">
+        <CodeBackground />
+
+        {/* Navigation */}
+        <motion.nav
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-green-400/20"
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <div className="flex items-center space-x-2">
+                <Code className="text-green-400" size={24} />
+                <span className="text-green-400 font-mono font-bold">
+                  dev@portfolio:~$
+                </span>
+              </div>
+
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex space-x-8">
+                {["home", "about", "certifications", "projects", "contact"].map(
+                  (section) => (
+                    <motion.button
+                      key={section}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay:
+                          0.3 +
+                          [
+                            "home",
+                            "about",
+                            "certifications",
+                            "projects",
+                            "contact",
+                          ].indexOf(section) *
+                            0.1,
+                      }}
+                      onClick={() => scrollToSection(section)}
+                      className={`font-mono text-sm transition-colors hover:text-green-400 ${
+                        activeSection === section
+                          ? "text-green-400"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      {section}
+                    </motion.button>
+                  )
+                )}
+              </div>
+
+              {/* Mobile Menu Button */}
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="md:hidden text-green-400"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </motion.button>
+            </div>
+
+            {/* Mobile Navigation */}
+            {isMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="md:hidden py-4 border-t border-green-400/20"
+              >
+                {["home", "about", "certifications", "projects", "contact"].map(
+                  (section) => (
+                    <motion.button
+                      key={section}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={() => scrollToSection(section)}
+                      className="block w-full text-left py-2 font-mono text-sm text-gray-300 hover:text-green-400 transition-colors"
+                    >
+                      {section}
+                    </motion.button>
+                  )
+                )}
+              </motion.div>
+            )}
+          </div>
+        </motion.nav>
+
+        {/* Home Section */}
+        <section
+          id="home"
+          className="min-h-screen flex items-center justify-center pt-16"
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <TerminalWindow title="Welcome to my portfolio" delay={0.4}>
+              <div className="space-y-6">
+                {/* Profile Photo without animation */}
+                <div className="relative inline-block">
+                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-green-400/30 mx-auto mb-6">
+                    <img
+                      src="https://placehold.co/400x400/1a1a1a/00ff00?text=AC"
+                      alt="Alex Chen"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <motion.h1
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                  className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4"
+                >
+                  <span className="text-green-400 font-mono">Hello, I'm</span>
+                  <br />
+                  <span className="text-white">Alex Chen</span>
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.0 }}
+                  className="text-xl text-gray-300 font-mono leading-relaxed"
+                >
+                  Full-Stack Developer | Problem Solver | Code Enthusiast
+                </motion.p>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.2 }}
+                  className="text-gray-400 leading-relaxed max-w-2xl mx-auto"
+                >
+                  I build exceptional digital experiences that are fast,
+                  accessible, visually appealing, and responsive. Even if you
+                  don't know what that means, I can guarantee you'll like the
+                  end product.
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.4 }}
+                  className="flex flex-wrap justify-center gap-4 mt-8"
+                >
+                  <a
+                    href="#projects"
+                    className="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors"
+                  >
+                    View Projects
+                  </a>
+                  <a
+                    href="#contact"
+                    className="border border-green-400 text-green-400 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors"
+                  >
+                    Get In Touch
+                  </a>
+                </motion.div>
+              </div>
+            </TerminalWindow>
+          </div>
+        </section>
+
+        {/* About Section */}
+        <section id="about" className="py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal delay={0.2}>
+              <TerminalWindow title="About Me">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <motion.h2
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      className="text-2xl font-bold text-green-400 font-mono mb-4"
+                    >
+                      <User className="inline mr-2" size={24} />
+                      Developer Profile
+                    </motion.h2>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.4 }}
+                      className="text-gray-300 mb-6 leading-relaxed"
+                    >
+                      I'm a passionate full-stack developer with 5+ years of
+                      experience creating web applications that solve real-world
+                      problems. I love turning complex problems into simple,
+                      beautiful solutions.
+                    </motion.p>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.6 }}
+                      className="text-gray-300 mb-6 leading-relaxed"
+                    >
+                      When I'm not coding, you can find me contributing to
+                      open-source projects, exploring new technologies, or
+                      hiking in the mountains.
+                    </motion.p>
+
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.8 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <GraduationCap className="text-green-400" size={20} />
+                        <span className="text-gray-300">
+                          B.S. Computer Science
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <Briefcase className="text-green-400" size={20} />
+                        <span className="text-gray-300">
+                          Senior Full-Stack Developer
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <Award className="text-green-400" size={20} />
+                        <span className="text-gray-300">
+                          10+ Successful Projects
+                        </span>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  <div>
+                    <motion.h3
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
+                      className="text-xl font-bold text-green-400 font-mono mb-4"
+                    >
+                      Tech Stack
+                    </motion.h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {skills.map((skill, index) => (
+                        <SkillTag
+                          key={index}
+                          skill={skill.name}
+                          level={skill.level}
+                          delay={index * 0.1}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </TerminalWindow>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Certifications Section */}
+        <section id="certifications" className="py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal delay={0.2}>
+              <TerminalWindow title="Professional Certifications">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-2xl font-bold text-green-400 font-mono mb-8 text-center"
+                >
+                  <Award className="inline mr-2" size={24} />
+                  Industry Recognized Credentials
+                </motion.h2>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {certifications.map((cert, index) => (
+                    <CertificationCard
+                      key={index}
+                      {...cert}
+                      delay={0.4 + index * 0.2}
+                    />
+                  ))}
+                </div>
+              </TerminalWindow>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Projects Section */}
+        <section id="projects" className="py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal delay={0.2}>
+              <TerminalWindow title="Recent Projects">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="text-2xl font-bold text-green-400 font-mono mb-8 text-center"
+                >
+                  <Terminal className="inline mr-2" size={24} />
+                  Featured Work
+                </motion.h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {projects.map((project, index) => (
+                    <ProjectCard key={index} {...project} delay={index * 0.2} />
+                  ))}
+                </div>
+              </TerminalWindow>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal delay={0.2}>
+              <TerminalWindow title="Get In Touch">
+                <div className="text-center">
+                  <motion.h2
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="text-2xl font-bold text-green-400 font-mono mb-6"
+                  >
+                    <Mail className="inline mr-2" size={24} />
+                    Let's Build Something Amazing Together
+                  </motion.h2>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="text-gray-300 mb-8 leading-relaxed"
+                  >
+                    I'm currently available for freelance work and full-time
+                    opportunities. Feel free to reach out if you have a project
+                    in mind or just want to say hello!
+                  </motion.p>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                    className="flex flex-wrap justify-center gap-4"
+                  >
+                    <a
+                      href="mailto:alex@example.com"
+                      className="flex items-center space-x-2 bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors"
+                    >
+                      <Mail size={16} />
+                      <span>Send Email</span>
+                    </a>
+                    <a
+                      href="https://github.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2 border border-green-400 text-green-400 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors"
+                    >
+                      <Github size={16} />
+                      <span>GitHub</span>
+                    </a>
+                  </motion.div>
+                </div>
+              </TerminalWindow>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <motion.footer
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="py-8 border-t border-green-400/20"
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-gray-400 font-mono text-sm">
+              © 2024 Alex Chen. Built with React and Tailwind CSS.
+            </p>
+          </div>
+        </motion.footer>
+      </AnimatePresence>
+    </div>
+  );
 }
 
-export default App
+export default App;
