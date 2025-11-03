@@ -1,6 +1,3 @@
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Github,
@@ -15,6 +12,7 @@ import {
   GraduationCap,
   Award,
   Loader,
+  Minimize2,
 } from "lucide-react";
 import {
   motion,
@@ -173,43 +171,39 @@ const LoadingScreen = () => {
   );
 };
 
-const TerminalHeader = ({ children }) => (
-  <div className="bg-gray-900/80 backdrop-blur-sm border-b border-green-400/20 rounded-t-xl p-4">
+const MacTerminalHeader = ({ children }) => (
+  <div className="bg-gray-800/90 backdrop-blur-sm border-b border-gray-600 rounded-t-xl p-3">
     <div className="flex items-center space-x-2">
-      <div className="flex space-x-1">
-        <motion.div
-          className="w-3 h-3 bg-red-500 rounded-full"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 0 }}
-        />
-        <motion.div
-          className="w-3 h-3 bg-yellow-500 rounded-full"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 0.2 }}
-        />
-        <motion.div
-          className="w-3 h-3 bg-green-500 rounded-full"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
-        />
+      <div className="flex space-x-1.5">
+        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
       </div>
-      <div className="text-green-400 font-mono text-sm ml-4">~/portfolio</div>
+      <div className="text-gray-400 font-mono text-sm ml-3">
+        {children || "Terminal"}
+      </div>
     </div>
-    {children && (
-      <div className="mt-2 text-green-300 font-mono text-xs">{children}</div>
-    )}
   </div>
 );
 
-const TerminalWindow = ({ children, title, delay = 0 }) => (
+const MacTerminalWindow = ({ children, title, delay = 0 }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6, delay }}
-    className="bg-gray-900/90 backdrop-blur-md border border-green-400/30 rounded-xl shadow-2xl overflow-hidden"
+    whileHover={{
+      scale: 1.02,
+      boxShadow: "0 20px 40px -10px rgba(0, 255, 0, 0.2)",
+      borderColor: "#10b981",
+    }}
+    className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 cursor-pointer relative"
   >
-    <TerminalHeader>{title}</TerminalHeader>
+    <MacTerminalHeader>{title}</MacTerminalHeader>
     <div className="p-6">{children}</div>
+    {/* Crop/Resize icon at bottom-right corner */}
+    <div className="absolute bottom-2 right-2 text-gray-500 opacity-60">
+      <Minimize2 size={12} className="rotate-45" />
+    </div>
   </motion.div>
 );
 
@@ -240,21 +234,63 @@ const ScrollReveal = ({ children, delay = 0, ...props }) => {
   );
 };
 
-const SkillTag = ({ skill, level, delay = 0 }) => (
-  <ScrollReveal delay={delay}>
-    <div className="bg-gray-800/50 border border-green-400/20 rounded-lg p-3 hover:bg-gray-800/70 transition-all duration-300">
-      <div className="text-green-300 font-mono text-sm mb-1">{skill}</div>
-      <div className="w-full bg-gray-700 rounded-full h-1.5">
+const SkillTag = ({ skill, level, delay = 0 }) => {
+  const [displayLevel, setDisplayLevel] = useState(0);
+  const controls = useAnimation();
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start({
+        opacity: 1,
+        x: 0,
+        transition: { duration: 0.5, delay },
+      });
+      // Animate the percentage number
+      const interval = setInterval(() => {
+        setDisplayLevel((prev) => {
+          if (prev >= level) {
+            clearInterval(interval);
+            return level;
+          }
+          return prev + 1;
+        });
+      }, 20);
+
+      return () => clearInterval(interval);
+    }
+  }, [isInView, controls, delay, level]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -20 }}
+      animate={controls}
+      whileHover={{
+        scale: 1.05,
+        backgroundColor: "rgba(30, 41, 59, 0.7)",
+        borderColor: "#10b981",
+      }}
+      className="bg-gray-800/50 border border-green-400/20 rounded-lg p-3 hover:bg-gray-800/70 transition-all duration-300 cursor-pointer"
+    >
+      <div className="flex justify-between items-center mb-2">
+        <div className="text-green-300 font-mono text-sm">{skill}</div>
+        <div className="text-green-400 font-mono text-sm font-bold">
+          {displayLevel}%
+        </div>
+      </div>
+      <div className="w-full bg-gray-700 rounded-full h-2">
         <motion.div
-          className="bg-green-400 h-1.5 rounded-full"
+          className="bg-green-400 h-2 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${level}%` }}
-          transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
+          transition={{ duration: 1.5, delay: delay + 0.2, ease: "easeOut" }}
         ></motion.div>
       </div>
-    </div>
-  </ScrollReveal>
-);
+    </motion.div>
+  );
+};
 
 const ProjectCard = ({
   title,
@@ -265,8 +301,7 @@ const ProjectCard = ({
   delay = 0,
 }) => (
   <ScrollReveal delay={delay}>
-    <TerminalWindow>
-      <h3 className="text-green-400 font-mono text-lg mb-2">{title}</h3>
+    <MacTerminalWindow title={title}>
       <p className="text-gray-300 text-sm mb-4 leading-relaxed">
         {description}
       </p>
@@ -276,8 +311,13 @@ const ProjectCard = ({
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
+            whileHover={{
+              scale: 1.1,
+              backgroundColor: "rgba(16, 185, 129, 0.3)",
+              color: "#fff",
+            }}
             transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
-            className="bg-green-400/10 text-green-300 px-2 py-1 rounded text-xs font-mono"
+            className="bg-green-400/10 text-green-300 px-2 py-1 rounded text-xs font-mono cursor-pointer"
           >
             {t}
           </motion.span>
@@ -285,48 +325,185 @@ const ProjectCard = ({
       </div>
       <div className="flex space-x-3">
         {liveUrl && (
-          <a
+          <motion.a
             href={liveUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-green-400 hover:text-green-300 transition-colors"
+            whileHover={{
+              scale: 1.05,
+              backgroundColor: "rgba(16, 185, 129, 0.2)",
+              color: "#10b981",
+            }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center space-x-1 text-green-400 hover:text-green-300 transition-colors cursor-pointer"
           >
             <ExternalLink size={14} />
             <span className="text-sm">Live Demo</span>
-          </a>
+          </motion.a>
         )}
         {githubUrl && (
-          <a
+          <motion.a
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-green-400 hover:text-green-300 transition-colors"
+            whileHover={{
+              scale: 1.05,
+              backgroundColor: "rgba(16, 185, 129, 0.2)",
+              color: "#10b981",
+            }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center space-x-1 text-green-400 hover:text-green-300 transition-colors cursor-pointer"
           >
             <Github size={14} />
             <span className="text-sm">Code</span>
-          </a>
+          </motion.a>
         )}
       </div>
-    </TerminalWindow>
+    </MacTerminalWindow>
   </ScrollReveal>
 );
 
 const CertificationCard = ({ title, issuer, date, description, delay = 0 }) => (
   <ScrollReveal delay={delay}>
-    <TerminalWindow>
+    <MacTerminalWindow title={title}>
       <div className="flex items-start space-x-3 mb-3">
         <Award className="text-green-400 mt-1 flex-shrink-0" size={20} />
         <div>
-          <h3 className="text-green-400 font-mono text-lg">{title}</h3>
           <p className="text-gray-400 text-sm">
             {issuer} • {date}
           </p>
         </div>
       </div>
       <p className="text-gray-300 text-sm leading-relaxed">{description}</p>
-    </TerminalWindow>
+    </MacTerminalWindow>
   </ScrollReveal>
 );
+
+const AboutMeMacTerminal = ({ delay = 0 }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay }}
+      whileHover={{
+        scale: 1.02,
+        boxShadow: "0 20px 40px -10px rgba(0, 255, 0, 0.2)",
+        borderColor: "#10b981",
+      }}
+      className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 cursor-pointer relative"
+    >
+      <MacTerminalHeader>About Me</MacTerminalHeader>
+      <div className="p-6">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl font-bold text-green-400 font-mono mb-4 flex items-center"
+            >
+              <User className="inline mr-2" size={20} />
+              Developer Profile
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-gray-300 mb-6 leading-relaxed text-sm"
+            >
+              I'm a passionate full-stack developer with 5+ years of experience
+              creating web applications that solve real-world problems. I love
+              turning complex problems into simple, beautiful solutions.
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="text-gray-300 mb-6 leading-relaxed text-sm"
+            >
+              When I'm not coding, you can find me contributing to open-source
+              projects, exploring new technologies, or hiking in the mountains.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="space-y-3 text-sm"
+            >
+              <motion.div
+                whileHover={{
+                  scale: 1.05,
+                  color: "#10b981",
+                }}
+                className="flex items-center space-x-3 cursor-pointer"
+              >
+                <GraduationCap className="text-green-400" size={16} />
+                <span className="text-gray-300">B.S. Computer Science</span>
+              </motion.div>
+              <motion.div
+                whileHover={{
+                  scale: 1.05,
+                  color: "#10b981",
+                }}
+                className="flex items-center space-x-3 cursor-pointer"
+              >
+                <Briefcase className="text-green-400" size={16} />
+                <span className="text-gray-300">
+                  Senior Full-Stack Developer
+                </span>
+              </motion.div>
+              <motion.div
+                whileHover={{
+                  scale: 1.05,
+                  color: "#10b981",
+                }}
+                className="flex items-center space-x-3 cursor-pointer"
+              >
+                <Award className="text-green-400" size={16} />
+                <span className="text-gray-300">10+ Successful Projects</span>
+              </motion.div>
+            </motion.div>
+          </div>
+
+          <div>
+            <motion.h3
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-lg font-bold text-green-400 font-mono mb-4"
+            >
+              Tech Stack
+            </motion.h3>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { name: "React.js", level: 90 },
+                { name: "JavaScript", level: 85 },
+                { name: "Node.js", level: 80 },
+                { name: "Python", level: 75 },
+                { name: "TypeScript", level: 85 },
+                { name: "Tailwind CSS", level: 90 },
+                { name: "MongoDB", level: 70 },
+                { name: "PostgreSQL", level: 65 },
+              ].map((skill, index) => (
+                <SkillTag
+                  key={index}
+                  skill={skill.name}
+                  level={skill.level}
+                  delay={index * 0.1}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Crop/Resize icon at bottom-right corner */}
+      <div className="absolute bottom-2 right-2 text-gray-500 opacity-60">
+        <Minimize2 size={12} className="rotate-45" />
+      </div>
+    </motion.div>
+  );
+};
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -379,17 +556,6 @@ function App() {
     }
     setIsMenuOpen(false);
   };
-
-  const skills = [
-    { name: "React.js", level: 90 },
-    { name: "JavaScript", level: 85 },
-    { name: "Node.js", level: 80 },
-    { name: "Python", level: 75 },
-    { name: "TypeScript", level: 85 },
-    { name: "Tailwind CSS", level: 90 },
-    { name: "MongoDB", level: 70 },
-    { name: "PostgreSQL", level: 65 },
-  ];
 
   const certifications = [
     {
@@ -463,7 +629,7 @@ function App() {
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-green-400/20"
+          className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-700"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
@@ -482,6 +648,11 @@ function App() {
                       key={section}
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      whileHover={{
+                        scale: 1.05,
+                        color: "#10b981",
+                      }}
+                      whileTap={{ scale: 0.95 }}
                       transition={{
                         duration: 0.5,
                         delay:
@@ -500,7 +671,7 @@ function App() {
                         activeSection === section
                           ? "text-green-400"
                           : "text-gray-300"
-                      }`}
+                      } cursor-pointer`}
                     >
                       {section}
                     </motion.button>
@@ -512,6 +683,8 @@ function App() {
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
                 className="md:hidden text-green-400"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -527,7 +700,7 @@ function App() {
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="md:hidden py-4 border-t border-green-400/20"
+                className="md:hidden py-4 border-t border-gray-700"
               >
                 {["home", "about", "certifications", "projects", "contact"].map(
                   (section) => (
@@ -535,9 +708,14 @@ function App() {
                       key={section}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
+                      whileHover={{
+                        scale: 1.05,
+                        color: "#10b981",
+                      }}
+                      whileTap={{ scale: 0.95 }}
                       transition={{ duration: 0.3 }}
                       onClick={() => scrollToSection(section)}
-                      className="block w-full text-left py-2 font-mono text-sm text-gray-300 hover:text-green-400 transition-colors"
+                      className="block w-full text-left py-2 font-mono text-sm text-gray-300 hover:text-green-400 transition-colors cursor-pointer"
                     >
                       {section}
                     </motion.button>
@@ -554,10 +732,17 @@ function App() {
           className="min-h-screen flex items-center justify-center pt-16"
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <TerminalWindow title="Welcome to my portfolio" delay={0.4}>
+            <MacTerminalWindow title="Welcome to my portfolio" delay={0.4}>
               <div className="space-y-6">
                 {/* Profile Photo without animation */}
-                <div className="relative inline-block">
+                <motion.div
+                  whileHover={{
+                    scale: 1.05,
+                    rotate: 5,
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative inline-block cursor-pointer"
+                >
                   <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-green-400/30 mx-auto mb-6">
                     <img
                       src="https://placehold.co/400x400/1a1a1a/00ff00?text=AC"
@@ -565,7 +750,7 @@ function App() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                </div>
+                </motion.div>
 
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
@@ -602,21 +787,33 @@ function App() {
                   transition={{ duration: 0.6, delay: 1.4 }}
                   className="flex flex-wrap justify-center gap-4 mt-8"
                 >
-                  <a
+                  <motion.a
                     href="#projects"
-                    className="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors"
+                    whileHover={{
+                      scale: 1.05,
+                      backgroundColor: "#10b981",
+                      color: "#0f172a",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors cursor-pointer"
                   >
                     View Projects
-                  </a>
-                  <a
+                  </motion.a>
+                  <motion.a
                     href="#contact"
-                    className="border border-green-400 text-green-400 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors"
+                    whileHover={{
+                      scale: 1.05,
+                      backgroundColor: "rgba(16, 185, 129, 0.2)",
+                      borderColor: "#10b981",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="border border-green-400 text-green-400 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors cursor-pointer"
                   >
                     Get In Touch
-                  </a>
+                  </motion.a>
                 </motion.div>
               </div>
-            </TerminalWindow>
+            </MacTerminalWindow>
           </div>
         </section>
 
@@ -624,89 +821,7 @@ function App() {
         <section id="about" className="py-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
-              <TerminalWindow title="About Me">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <motion.h2
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="text-2xl font-bold text-green-400 font-mono mb-4"
-                    >
-                      <User className="inline mr-2" size={24} />
-                      Developer Profile
-                    </motion.h2>
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.4 }}
-                      className="text-gray-300 mb-6 leading-relaxed"
-                    >
-                      I'm a passionate full-stack developer with 5+ years of
-                      experience creating web applications that solve real-world
-                      problems. I love turning complex problems into simple,
-                      beautiful solutions.
-                    </motion.p>
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.6 }}
-                      className="text-gray-300 mb-6 leading-relaxed"
-                    >
-                      When I'm not coding, you can find me contributing to
-                      open-source projects, exploring new technologies, or
-                      hiking in the mountains.
-                    </motion.p>
-
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
-                      className="space-y-4"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <GraduationCap className="text-green-400" size={20} />
-                        <span className="text-gray-300">
-                          B.S. Computer Science
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Briefcase className="text-green-400" size={20} />
-                        <span className="text-gray-300">
-                          Senior Full-Stack Developer
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Award className="text-green-400" size={20} />
-                        <span className="text-gray-300">
-                          10+ Successful Projects
-                        </span>
-                      </div>
-                    </motion.div>
-                  </div>
-
-                  <div>
-                    <motion.h3
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="text-xl font-bold text-green-400 font-mono mb-4"
-                    >
-                      Tech Stack
-                    </motion.h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      {skills.map((skill, index) => (
-                        <SkillTag
-                          key={index}
-                          skill={skill.name}
-                          level={skill.level}
-                          delay={index * 0.1}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </TerminalWindow>
+              <AboutMeMacTerminal />
             </ScrollReveal>
           </div>
         </section>
@@ -715,14 +830,14 @@ function App() {
         <section id="certifications" className="py-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
-              <TerminalWindow title="Professional Certifications">
+              <MacTerminalWindow title="Professional Certifications">
                 <motion.h2
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="text-2xl font-bold text-green-400 font-mono mb-8 text-center"
+                  className="text-xl font-bold text-green-400 font-mono mb-6 text-center flex items-center justify-center"
                 >
-                  <Award className="inline mr-2" size={24} />
+                  <Award className="inline mr-2" size={20} />
                   Industry Recognized Credentials
                 </motion.h2>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -734,7 +849,7 @@ function App() {
                     />
                   ))}
                 </div>
-              </TerminalWindow>
+              </MacTerminalWindow>
             </ScrollReveal>
           </div>
         </section>
@@ -743,14 +858,14 @@ function App() {
         <section id="projects" className="py-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
-              <TerminalWindow title="Recent Projects">
+              <MacTerminalWindow title="Recent Projects">
                 <motion.h2
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="text-2xl font-bold text-green-400 font-mono mb-8 text-center"
+                  className="text-xl font-bold text-green-400 font-mono mb-6 text-center flex items-center justify-center"
                 >
-                  <Terminal className="inline mr-2" size={24} />
+                  <Terminal className="inline mr-2" size={20} />
                   Featured Work
                 </motion.h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -758,7 +873,7 @@ function App() {
                     <ProjectCard key={index} {...project} delay={index * 0.2} />
                   ))}
                 </div>
-              </TerminalWindow>
+              </MacTerminalWindow>
             </ScrollReveal>
           </div>
         </section>
@@ -767,22 +882,22 @@ function App() {
         <section id="contact" className="py-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal delay={0.2}>
-              <TerminalWindow title="Get In Touch">
+              <MacTerminalWindow title="Get In Touch">
                 <div className="text-center">
                   <motion.h2
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="text-2xl font-bold text-green-400 font-mono mb-6"
+                    className="text-xl font-bold text-green-400 font-mono mb-4 flex items-center justify-center"
                   >
-                    <Mail className="inline mr-2" size={24} />
+                    <Mail className="inline mr-2" size={20} />
                     Let's Build Something Amazing Together
                   </motion.h2>
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
-                    className="text-gray-300 mb-8 leading-relaxed"
+                    className="text-gray-300 mb-6 leading-relaxed"
                   >
                     I'm currently available for freelance work and full-time
                     opportunities. Feel free to reach out if you have a project
@@ -794,25 +909,35 @@ function App() {
                     transition={{ duration: 0.5, delay: 0.6 }}
                     className="flex flex-wrap justify-center gap-4"
                   >
-                    <a
+                    <motion.a
                       href="mailto:alex@example.com"
-                      className="flex items-center space-x-2 bg-green-400 text-gray-900 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors"
+                      whileHover={{
+                        scale: 1.05,
+                        backgroundColor: "#10b981",
+                        color: "#0f172a",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center space-x-2 bg-green-400 text-gray-900 px-4 py-2 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors text-sm cursor-pointer"
                     >
-                      <Mail size={16} />
+                      <Mail size={14} />
                       <span>Send Email</span>
-                    </a>
-                    <a
+                    </motion.a>
+                    <motion.a
                       href="https://github.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center space-x-2 border border-green-400 text-green-400 px-6 py-3 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors"
+                      whileHover={{
+                        scale: 1.05,
+                        backgroundColor: "rgba(16, 185, 129, 0.2)",
+                        borderColor: "#10b981",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center space-x-2 border border-green-400 text-green-400 px-4 py-2 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors text-sm cursor-pointer"
                     >
-                      <Github size={16} />
+                      <Github size={14} />
                       <span>GitHub</span>
-                    </a>
+                    </motion.a>
                   </motion.div>
                 </div>
-              </TerminalWindow>
+              </MacTerminalWindow>
             </ScrollReveal>
           </div>
         </section>
@@ -822,12 +947,18 @@ function App() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="py-8 border-t border-green-400/20"
+          className="py-8 border-t border-gray-700"
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p className="text-gray-400 font-mono text-sm">
+            <motion.p
+              whileHover={{
+                color: "#10b981",
+                scale: 1.02,
+              }}
+              className="text-gray-400 font-mono text-sm cursor-pointer"
+            >
               © 2024 Alex Chen. Built with React and Tailwind CSS.
-            </p>
+            </motion.p>
           </div>
         </motion.footer>
       </AnimatePresence>
