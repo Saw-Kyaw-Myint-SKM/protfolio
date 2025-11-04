@@ -275,7 +275,7 @@ export default function App() {
           className="min-h-screen flex items-center justify-center pt-16 pb-8"
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <MacTerminalWindow title="Welcome to my portfolio" delay={0.4}>
+            <MacTerminalWindow title="Welcome to my portfolio" delay={0.2}>
               <div className="space-y-6">
                 {/* Profile Photo without animation */}
                 <motion.div
@@ -456,15 +456,13 @@ export default function App() {
                       }}
                       className="flex items-center space-x-3 space-y-2 cursor-pointer"
                     >
-                      <Mail className="text-green-400" size={16} />
-                      <span className="text-gray-300">
-                        <a
-                          href="mailto:sawkyaw7777777@gmail.com"
-                          className=" hover:underline"
-                        >
-                          sawkyaw7777777@gmail.com
-                        </a>
-                      </span>
+                      <Mail className="text-green-400 mt-1" size={16} />
+                      <a
+                        href="mailto:sawkyaw7777777@gmail.com"
+                        className="hover:underline m-0"
+                      >
+                        sawkyaw7777777@gmail.com
+                      </a>
                     </motion.div>
                     <motion.div
                       whileHover={{
