@@ -9,10 +9,13 @@ import { ProjectCard } from "./component/ProjectCard";
 import { CertificationCard } from "./component/CertificationCard";
 import { AboutMeMacTerminal } from "./component/AboutMeMacTerminal";
 import { BackToTopButton } from "./component/BackToTopButton";
+import Profile from "./assets/profile.png";
+import Resume from "./assets/Saw_Kyaw_Myint.pdf";
+
 import {
   Github,
   Mail,
-  ExternalLink,
+  FileDown,
   Menu,
   X,
   Code,
@@ -284,7 +287,7 @@ export default function App() {
                 >
                   <div className="w-44 h-44 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-green-400/30 mx-auto">
                     <img
-                      src="/src/assets/profile.png"
+                      src={Profile}
                       alt="Alex Chen"
                       className="w-full h-full object-cover"
                     />
@@ -487,7 +490,9 @@ export default function App() {
                     transition={{ duration: 0.5, delay: 0.6 }}
                     className="flex flex-wrap justify-center gap-4"
                   >
-                    <motion.div
+                    <motion.a
+                      href={Resume}
+                      download="Saw_Kyaw_Myint_Resume"
                       whileHover={{
                         scale: 1.05,
                         backgroundColor: "#10b981",
@@ -496,13 +501,11 @@ export default function App() {
                       whileTap={{ scale: 0.95 }}
                       className="flex items-center space-x-2 bg-green-400 text-gray-900 px-4 py-2 rounded-lg font-mono font-bold hover:bg-green-300 transition-colors text-sm cursor-pointer"
                     >
-                      <Mail size={14} />
-                      <a href="mailto:sawkyaw7777777@gmail.com" target="_blank">
-                        Send Email
-                      </a>
-                    </motion.div>
+                      <FileDown size={14} />
+                      <p>Resume</p>
+                    </motion.a>
                     <motion.a
-                      href="https://github.com"
+                      href="https://github.com/Saw-Kyaw-Myint-SKM"
                       whileHover={{
                         scale: 1.05,
                         backgroundColor: "rgba(16, 185, 129, 0.2)",
@@ -514,6 +517,20 @@ export default function App() {
                       <Github size={14} />
                       <span>GitHub</span>
                     </motion.a>
+                    <motion.div
+                      whileHover={{
+                        scale: 1.05,
+                        backgroundColor: "rgba(16, 185, 129, 0.2)",
+                        borderColor: "#10b981",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center space-x-2 border border-green-400 text-green-400 px-4 py-2 rounded-lg font-mono font-bold hover:bg-green-400/10 transition-colors text-sm cursor-pointer"
+                    >
+                      <Mail size={14} />
+                      <a href="mailto:sawkyaw7777777@gmail.com" target="_blank">
+                        Send Email
+                      </a>
+                    </motion.div>
                   </motion.div>
                 </div>
               </MacTerminalWindow>
