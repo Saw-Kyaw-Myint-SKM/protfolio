@@ -488,7 +488,7 @@ export default function App() {
                     className="flex flex-wrap justify-center gap-4"
                   >
                     <motion.a
-                      href="/public/Saw_Kyaw_Myint.pdf"
+                      href="/Saw_Kyaw_Myint.pdf"
                       download="Saw_Kyaw_Myint_Resume"
                       whileHover={{
                         scale: 1.05,
