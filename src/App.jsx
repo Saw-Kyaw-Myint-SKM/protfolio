@@ -434,7 +434,7 @@ export default function App() {
                     <Mail className="mr-2 hidden md:inline" size={20} />
                     Let's Build Something Amazing Together
                   </motion.h2>
-                  <div className="mb-4 px-9 py-4">
+                  <div className="mb-4 px-8 py-4">
                     <motion.div
                       whileHover={{
                         color: "#10b981",
