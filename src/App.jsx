@@ -10,7 +10,6 @@ import { CertificationCard } from "./component/CertificationCard";
 import { AboutMeMacTerminal } from "./component/AboutMeMacTerminal";
 import { BackToTopButton } from "./component/BackToTopButton";
 import Profile from "./assets/profile.png";
-import Resume from "./assets/Saw_Kyaw_Myint.pdf";
 
 import {
   Github,
@@ -489,7 +488,7 @@ export default function App() {
                     className="flex flex-wrap justify-center gap-4"
                   >
                     <motion.a
-                      href={Resume}
+                      href="/public/Saw_Kyaw_Myint.pdf"
                       download="Saw_Kyaw_Myint_Resume"
                       whileHover={{
                         scale: 1.05,
